@@ -1,15 +1,17 @@
 import {
     Component,
-    OnInit,
     ContentChildren,
     QueryList,
     ElementRef,
     ViewChild,
-    OnDestroy, Input, AfterContentInit, AfterViewInit
+    OnDestroy,
+    Input,
+    Output,
+    EventEmitter, HostListener
 } from "@angular/core";
 import {NodeDirective} from "./node/node.directive";
 import {EdgeDirective} from "./edge/edge.directive";
-import {VisGraphService} from "./vis-graph.service";
+import {VisGraphService, VisNgNetworkEventArgument} from "./vis-graph.service";
 import {VglNode} from "./node.interface";
 import {VglEdge} from "./edge.interface";
 import {Subject, Observable, Subscription} from "rxjs";
@@ -35,7 +37,6 @@ export class VisGraphComponent implements OnDestroy {
 
     @ContentChildren(NodeDirective)
     public set nodes(nodes: QueryList<NodeDirective>) {
-        console.log('content children');
         this.nodes$.next(nodes);
     }
 
@@ -47,6 +48,22 @@ export class VisGraphComponent implements OnDestroy {
     @Input()
     public set options(options: VisNgOptions) {
         this.options$.next(options);
+    }
+
+    @Output()
+    public graphClick: EventEmitter<VisNgNetworkEventArgument>
+        = new EventEmitter<VisNgNetworkEventArgument>();
+
+    private onClick(arg: VisNgNetworkEventArgument): void {
+        this.graphClick.emit(arg);
+    }
+
+    @Output()
+    public graphRightClick: EventEmitter<VisNgNetworkEventArgument> =
+        new EventEmitter<VisNgNetworkEventArgument>();
+
+    private onRightClick(arg: VisNgNetworkEventArgument): void {
+        this.graphRightClick.emit(arg);
     }
 
     @ViewChild('graph')
@@ -71,21 +88,33 @@ export class VisGraphComponent implements OnDestroy {
 
     private subscriptions_: Subscription[] = [];
 
-    constructor(private visGraphService: VisGraphService) {
+    constructor(private service: VisGraphService) {
         let sub = this.changes$.take(1).subscribe(values => {
-            this.visGraphService.initializeGraph(this.graphElement, values.nodes, values.edges, values.options);
+            this.service.initializeGraph(this.graphElement, values.nodes, values.edges, values.options);
         });
         this.subscriptions_.push(sub);
 
         sub = this.changes$.skip(1).subscribe(values => {
-            this.visGraphService.onChange({nodes: values.nodes, edges: values.edges, options: values.options});
+            this.service.onChange({
+                nodes: values.nodes,
+                edges: values.edges,
+                options: values.options
+            });
         });
         this.subscriptions_.push(sub);
     }
 
+    ngOnInit() {
+        // We must wait a tick for network to be created in the service.
+        setTimeout(() => {
+            this.service.attachEvent('click', arg => this.onClick(arg));
+            this.service.attachEvent('oncontext', arg => this.onRightClick(arg));
+        });
+    }
+
     ngOnDestroy() {
         this.subscriptions_.forEach(s => s.unsubscribe());
-        this.visGraphService.destroy();
+        this.service.destroy();
     }
 
 }

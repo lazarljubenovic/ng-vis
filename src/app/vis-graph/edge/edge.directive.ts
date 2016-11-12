@@ -1,5 +1,6 @@
 import {OnInit, Input, Directive} from "@angular/core";
 import {VglEdge} from "../edge.interface";
+import {VisGraphService} from "../vis-graph.service";
 
 @Directive({
     selector: 'vgl-edge',
@@ -31,7 +32,7 @@ export class EdgeDirective implements OnInit {
         };
     }
 
-    constructor() {
+    constructor(private service: VisGraphService) {
     }
 
     ngOnInit() {

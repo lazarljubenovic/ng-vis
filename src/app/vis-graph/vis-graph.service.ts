@@ -4,13 +4,34 @@ import {Injectable, ElementRef} from "@angular/core";
 import * as vis from "vis";
 import {VglEdge} from "./edge.interface";
 import {VglNode} from "./node.interface";
-import {Edge} from "graphlib";
 import {VisNgOptions} from "./options.interface";
+
+export interface VisNgNetworkEventArgument {
+    nodes?: (string | number)[]; // array of selected nodeIds
+    edges?: (string | number)[]; // array of selected edgeIds
+    event?: MouseEvent;
+    pointer?: {
+        DOM?: {x: number, y: number};
+        canvas?: {x: number, y: number};
+    };
+}
+
+export declare type VisNgNetworkEventCallback = (event: VisNgNetworkEventArgument) => any;
+
+export interface VisNgNetwork {
+    // Global methods for the network
+    destroy(): void;
+    setData(data: {nodes: any, edges: any}): void;
+    setOptions(options: VisNgOptions): void;
+    on(eventName: string, callback: VisNgNetworkEventCallback): void;
+    off(eventName: string, callback?: VisNgNetworkEventCallback): void;
+    once(eventName: string, callback: VisNgNetworkEventCallback): void;
+}
 
 @Injectable()
 export class VisGraphService {
 
-    private network: any;
+    private network: VisNgNetwork;
 
     private nodes: any;
     private edges: any;
@@ -18,6 +39,15 @@ export class VisGraphService {
     private options: VisNgOptions;
 
     constructor() {
+    }
+
+    /**
+     * Attach vis event to the current network.
+     * @param eventName
+     * @param callback
+     */
+    public attachEvent(eventName: string, callback: VisNgNetworkEventCallback) {
+        this.network.on(eventName, callback);
     }
 
     public onChange(newState): void {

@@ -1,14 +1,19 @@
-import {Component, ViewChild} from "@angular/core";
+import {Component} from "@angular/core";
 import {VglEdge} from "./vis-graph/edge.interface";
 import {VglNode} from "./vis-graph/node.interface";
 import {VisNgOptions} from "./vis-graph/options.interface";
 
 @Component({
     selector: 'app-root',
-    template: `<vgl-vis-graph [options]="options">
+    template: `
+<vgl-vis-graph [options]="options"
+               (graphClick)="onWhatever($event)"
+               (graphRightClick)="onWhatever($event)"
+>
   <vgl-node *ngFor="let node of nodes"
             [id]="node.id"
             [label]="node.label"
+            (select)="onWhatever($event)"
   ></vgl-node>
   <vgl-edge *ngFor="let edge of edges"
             [id]="edge.id"
@@ -19,13 +24,13 @@ import {VisNgOptions} from "./vis-graph/options.interface";
   ></vgl-edge>
 </vgl-vis-graph>
 
-<div>
+<div id="buttons">
   <button (click)="changeStyle()">Change style</button>
   <button (click)="addConnectedNodes()">Add connected nodes</button>
   <button (click)="delete()">Delete one node</button>
 </div>
 `,
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
 
@@ -38,7 +43,7 @@ export class AppComponent {
         id: `${el}-${el + 1}`,
         from: `${el}`,
         to: `${el + 1}`,
-        label: `${el} -> ${el + 1}`,
+        label: `${Math.floor(Math.random() * 10)}`,
         name: `${el}-${el + 1}`,
     }));
 
@@ -52,9 +57,36 @@ export class AppComponent {
                     background: '#ffffff',
                 },
             },
+            font: {
+                color: 'rgba(0, 0, 0, .87)',
+                size: 24,
+                face: 'Arial',
+            },
+            shadow: {
+                enabled: true,
+                color: 'rgba(0, 0, 0, .2)',
+                size: 5,
+                x: 0,
+                y: 1,
+            },
             shape: 'circle',
         },
+        edges: {
+            smooth: false,
+            arrows: {
+                to: {
+                    enabled: true,
+                    scaleFactor: 1,
+                    type: 'arrow',
+                },
+            },
+        },
+        physics: false,
     };
+
+    public onWhatever(something) {
+        console.log(something);
+    }
 
     public changeStyle() {
         const randomColor = `#${(Math.random() * 0xFFFFFF << 0).toString(16)}`;
