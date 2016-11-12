@@ -5,22 +5,24 @@ import * as vis from "vis";
 import {VglEdge} from "./edge.interface";
 import {VglNode} from "./node.interface";
 import {Edge} from "graphlib";
-
-interface Differable {
-    id: string | number;
-}
+import {VisNgOptions} from "./options.interface";
 
 @Injectable()
 export class VisGraphService {
 
+    private network: any;
+
     private nodes: any;
     private edges: any;
     private container: ElementRef;
+    private options: VisNgOptions;
 
     constructor() {
     }
 
     public onChange(newState): void {
+        this.network.setOptions(newState.options);
+
         const diffNodes = this.diff(this.nodes.get(), newState.nodes);
         const diffEdges = this.diff(this.edges.get(), newState.edges);
 
@@ -55,15 +57,18 @@ export class VisGraphService {
             nodes: this.nodes,
             edges: this.edges
         };
-        var options = {};
-        var network = new vis.Network(this.container.nativeElement, data, options);
-        console.log(network);
+        var options = this.options;
+        this.network = new vis.Network(this.container.nativeElement, data, options);
     }
 
-    public initializeGraph(container: ElementRef, nodes: VglNode[], edges: VglEdge[]): void {
+    public initializeGraph(container: ElementRef,
+                           nodes: VglNode[],
+                           edges: VglEdge[],
+                           options: VisNgOptions): void {
         this.container = container;
         this.nodes = new vis.DataSet(nodes);
         this.edges = new vis.DataSet(edges);
+        this.options = options;
         this.initDraw();
     }
 

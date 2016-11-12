@@ -1,10 +1,11 @@
 import {Component, ViewChild} from "@angular/core";
 import {VglEdge} from "./vis-graph/edge.interface";
 import {VglNode} from "./vis-graph/node.interface";
+import {VisNgOptions} from "./vis-graph/options.interface";
 
 @Component({
     selector: 'app-root',
-    template: `<vgl-vis-graph>
+    template: `<vgl-vis-graph [options]="options">
   <vgl-node *ngFor="let node of nodes"
             [id]="node.id"
             [label]="node.label"
@@ -19,6 +20,7 @@ import {VglNode} from "./vis-graph/node.interface";
 </vgl-vis-graph>
 
 <div>
+  <button (click)="changeStyle()">Change style</button>
   <button (click)="addConnectedNodes()">Add connected nodes</button>
   <button (click)="delete()">Delete one node</button>
 </div>
@@ -39,6 +41,31 @@ export class AppComponent {
         label: `${el} -> ${el + 1}`,
         name: `${el}-${el + 1}`,
     }));
+
+    public options: VisNgOptions = {
+        nodes: {
+            color: {
+                border: '#d7d7d7',
+                background: '#f3f3f3',
+                highlight: {
+                    border: '#e3e3e3',
+                    background: '#ffffff',
+                },
+            },
+            shape: 'circle',
+        },
+    };
+
+    public changeStyle() {
+        const randomColor = `#${(Math.random() * 0xFFFFFF << 0).toString(16)}`;
+        this.options = {
+            nodes: {
+                color: {
+                    background: randomColor,
+                },
+            },
+        };
+    }
 
     public delete() {
         this.nodes.splice(-1);
