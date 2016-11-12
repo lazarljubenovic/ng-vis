@@ -72,8 +72,8 @@ export class VisGraphService {
         this.initDraw();
     }
 
-    private transformNode(node: VglNode): Edge {
-        return null;
+    public destroy() {
+        this.network.destroy();
     }
 
 }

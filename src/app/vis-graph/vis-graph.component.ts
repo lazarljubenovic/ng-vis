@@ -85,6 +85,7 @@ export class VisGraphComponent implements OnDestroy {
 
     ngOnDestroy() {
         this.subscriptions_.forEach(s => s.unsubscribe());
+        this.visGraphService.destroy();
     }
 
 }
