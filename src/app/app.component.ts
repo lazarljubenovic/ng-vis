@@ -7,13 +7,15 @@ import {VisNgOptions} from "./vis-graph/options.interface";
     selector: 'app-root',
     template: `
 <vgl-vis-graph [options]="options"
-               (graphClick)="onWhatever($event)"
-               (graphRightClick)="onWhatever($event)"
 >
+  <vgl-node [id]="1001"
+            [label]="'1'"
+            [options]="specialOptions"
+  ></vgl-node>
+  
   <vgl-node *ngFor="let node of nodes"
             [id]="node.id"
             [label]="node.label"
-            (select)="onWhatever($event)"
   ></vgl-node>
   <vgl-edge *ngFor="let edge of edges"
             [id]="edge.id"
@@ -28,6 +30,7 @@ import {VisNgOptions} from "./vis-graph/options.interface";
   <button (click)="changeStyle()">Change style</button>
   <button (click)="addConnectedNodes()">Add connected nodes</button>
   <button (click)="delete()">Delete one node</button>
+  <button (click)="changeSpecialOptions()">Change special</button>
 </div>
 `,
     styleUrls: ['./app.component.scss'],
@@ -82,6 +85,15 @@ export class AppComponent {
             },
         },
         physics: false,
+    };
+
+    public specialOptions = {color: 'red', font: '64px arial yellow'};
+
+    public changeSpecialOptions() {
+        this.specialOptions = {
+            color: ['red', 'yellow', 'blue', 'green'][Math.round(Math.random() * 4)],
+            font: '64 arial ' + ['red', 'yellow', 'blue', 'green'][Math.round(Math.random() * 4)],
+        }
     };
 
     public onWhatever(something) {

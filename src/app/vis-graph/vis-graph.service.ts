@@ -28,17 +28,53 @@ export interface VisNgNetwork {
     once(eventName: string, callback: VisNgNetworkEventCallback): void;
 }
 
+// For a lot of these I have no idea what are the types of parameters.
+// Docs are kinda shitty for types.
+export interface VsNgDataSet {
+    // Methods
+
+
+    add(data: any[], senderId?: any): number[];
+    clear(senderId?: any): number[];
+    distinct(field: any): any[];
+    flush(): void;
+    forEach(callback: Function, options?: any): void;
+    get(): any[];
+    get(options?, data?): Object | any[];
+    get(id, options?, data?): Object | any[];
+    get(ids, options?, data?): Object | any[];
+    getDataSet(): any;
+    getIds(options?): number[];
+    //...
+    remove(id, senderId?): number[];
+    remove(ids, senderId?): number[];
+    //...
+    update(data, senderId?): number[];
+
+
+    // Properties
+
+    /**
+     * The number of items in the DataSet.
+     */
+    length: number;
+}
+
 @Injectable()
 export class VisGraphService {
 
     private network: VisNgNetwork;
 
-    private nodes: any;
-    private edges: any;
+    private nodes: VsNgDataSet;
+    private edges: VsNgDataSet;
     private container: ElementRef;
     private options: VisNgOptions;
 
     constructor() {
+    }
+
+    public getVisNode(nodeId: string | number): any {
+        return this.nodes.get(nodeId);
     }
 
     /**
@@ -48,6 +84,30 @@ export class VisGraphService {
      */
     public attachEvent(eventName: string, callback: VisNgNetworkEventCallback) {
         this.network.on(eventName, callback);
+    }
+
+    public addNode(node: any): void {
+        this.nodes.add(node);
+    }
+
+    public updateNode(node: any): void {
+        this.nodes.update(node)
+    }
+
+    public removeNode(nodeId: number | string): void {
+        this.nodes.remove(nodeId);
+    }
+
+    public addEdge(edge: any): void {
+        this.edges.add(edge);
+    }
+
+    public updateEdge(edge: any): void {
+        this.edges.update(edge);
+    }
+
+    public removeEdge(edgeId: number | string): void {
+        this.edges.remove(edgeId);
     }
 
     public onChange(newState): void {

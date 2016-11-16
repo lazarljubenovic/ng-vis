@@ -1,6 +1,7 @@
 import {OnInit, Input, Directive, Output, EventEmitter} from "@angular/core";
 import {VglNode} from "../node.interface";
 import {VisGraphService, VisNgNetworkEventArgument} from "../vis-graph.service";
+import {VisNgOptionsNodes} from "../options.interface";
 
 @Directive({selector: 'vgl-node'})
 export class NodeDirective implements OnInit {
@@ -10,6 +11,18 @@ export class NodeDirective implements OnInit {
 
     @Input()
     public label: string;
+
+    private _options: VisNgOptionsNodes;
+
+    @Input()
+    public set options(options: VisNgOptionsNodes) {
+        this._options = options;
+        setTimeout(() => this.service.updateNode(this.toObject()));
+    }
+
+    public get options(): VisNgOptionsNodes {
+        return this._options;
+    }
 
     @Output()
     public select: EventEmitter<VisNgNetworkEventArgument> = new EventEmitter<VisNgNetworkEventArgument>();
@@ -21,10 +34,10 @@ export class NodeDirective implements OnInit {
     }
 
     public toObject(): VglNode {
-        return {
+        return Object.assign({
             id: this.id,
-            label: this.label
-        };
+            label: this.label,
+        }, this.options);
     }
 
     constructor(private service: VisGraphService) {

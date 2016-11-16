@@ -37,6 +37,7 @@ export class VisGraphComponent implements OnDestroy {
 
     @ContentChildren(NodeDirective)
     public set nodes(nodes: QueryList<NodeDirective>) {
+        console.log(nodes);
         this.nodes$.next(nodes);
     }
 
