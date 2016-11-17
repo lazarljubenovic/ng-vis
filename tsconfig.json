@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "noImplicitAny": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "outDir": "tmp/es5",
+    "rootDir": ".",
+    "sourceMap": true,
+    "removeComments": false,
+    "moduleResolution": "node",
+    "declaration": true,
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "types": [
+      "jasmine"
+    ]
+  },
+  "angularCompilerOptions": {
+    "genDir": "tmp",
+    "debug": false,
+    "skipMetadataEmit": false
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

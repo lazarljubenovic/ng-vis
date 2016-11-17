@@ -25,7 +25,17 @@ import {VisNgOptions} from "./options.interface";
 {{edges | json}}</pre>
 <ng-content></ng-content>
 `,
-    styleUrls: ['./vis-graph.component.scss']
+    styles: [`
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.graph {
+  width: 100%;
+  height: 100%;
+}`]
 })
 export class VisGraphComponent implements OnDestroy {
 
@@ -37,7 +47,6 @@ export class VisGraphComponent implements OnDestroy {
 
     @ContentChildren(NodeDirective)
     public set nodes(nodes: QueryList<NodeDirective>) {
-        console.log(nodes);
         this.nodes$.next(nodes);
     }
 
