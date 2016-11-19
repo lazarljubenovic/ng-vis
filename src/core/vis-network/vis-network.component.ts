@@ -7,18 +7,19 @@ import {
     OnDestroy,
     Input,
     Output,
-    EventEmitter, HostListener
+    EventEmitter
 } from "@angular/core";
-import {NodeDirective} from "./node/node.directive";
-import {EdgeDirective} from "./edge/edge.directive";
-import {VisGraphService, VisNgNetworkEventArgument} from "./vis-graph.service";
-import {VglNode} from "./node.interface";
-import {VglEdge} from "./edge.interface";
+import {VisNetworkNodeDirective} from "./node/vis-network-node.directive";
+import {VisNetworkEdgeDirective} from "./edge/vis-network-edge.directive";
+import {VisNetworkService} from "./vis-network.service";
+import {VisNgNetworkNode} from "./interfaces/vis-ng-network-node.interface";
+import {VisNgNetworkEdge} from "./interfaces/vis-ng-network-edge.interface";
 import {Subject, Observable, Subscription} from "rxjs";
-import {VisNgOptions} from "./options.interface";
+import {VisNgNetworkOptions} from "./interfaces/vis-ng-network-options.interface";
+import {VisNgNetworkEventArgument} from "./interfaces/vis-ng-network.interface";
 
 @Component({
-    selector: 'vgl-vis-graph',
+    selector: 'vis-network',
     template: `
 <div class="graph" #graph></div>
 <pre *ngIf="debug" class="json">{{nodes | json}}
@@ -37,26 +38,26 @@ import {VisNgOptions} from "./options.interface";
   height: 100%;
 }`]
 })
-export class VisGraphComponent implements OnDestroy {
+export class VisNetworkComponent implements OnDestroy {
 
     public debug: boolean = false;
 
-    public nodes$: Subject<QueryList<NodeDirective>> = new Subject<QueryList<NodeDirective>>();
-    public edges$: Subject<QueryList<EdgeDirective>> = new Subject<QueryList<EdgeDirective>>();
-    public options$: Subject<VisNgOptions> = new Subject<VisNgOptions>();
+    public nodes$: Subject<QueryList<VisNetworkNodeDirective>> = new Subject<QueryList<VisNetworkNodeDirective>>();
+    public edges$: Subject<QueryList<VisNetworkEdgeDirective>> = new Subject<QueryList<VisNetworkEdgeDirective>>();
+    public options$: Subject<VisNgNetworkOptions> = new Subject<VisNgNetworkOptions>();
 
-    @ContentChildren(NodeDirective)
-    public set nodes(nodes: QueryList<NodeDirective>) {
+    @ContentChildren(VisNetworkNodeDirective)
+    public set nodes(nodes: QueryList<VisNetworkNodeDirective>) {
         this.nodes$.next(nodes);
     }
 
-    @ContentChildren(EdgeDirective)
-    public set edges(edges: QueryList<EdgeDirective>) {
+    @ContentChildren(VisNetworkEdgeDirective)
+    public set edges(edges: QueryList<VisNetworkEdgeDirective>) {
         this.edges$.next(edges);
     }
 
     @Input()
-    public set options(options: VisNgOptions) {
+    public set options(options: VisNgNetworkOptions) {
         this.options$.next(options);
     }
 
@@ -79,7 +80,7 @@ export class VisGraphComponent implements OnDestroy {
     @ViewChild('graph')
     public graphElement: ElementRef;
 
-    public changes$: Observable<{nodes: VglNode[], edges: VglEdge[], options: VisNgOptions}> =
+    public changes$: Observable<{nodes: VisNgNetworkNode[], edges: VisNgNetworkEdge[], options: VisNgNetworkOptions}> =
         Observable.combineLatest(this.nodes$, this.edges$, this.options$)
             .map(values => {
                 return {
@@ -90,15 +91,15 @@ export class VisGraphComponent implements OnDestroy {
             })
             .filter(values => values.options !== null)
             .map(values => {
-                const nodes: VglNode[] = values.nodes.map(node => node.toObject());
-                const edges: VglEdge[] = values.edges.map(edge => edge.toObject());
-                const options: VisNgOptions = values.options;
+                const nodes: VisNgNetworkNode[] = values.nodes.map(node => node.toObject());
+                const edges: VisNgNetworkEdge[] = values.edges.map(edge => edge.toObject());
+                const options: VisNgNetworkOptions = values.options;
                 return {nodes, edges, options};
             });
 
     private subscriptions_: Subscription[] = [];
 
-    constructor(private service: VisGraphService) {
+    constructor(private service: VisNetworkService) {
         let sub = this.changes$.take(1).subscribe(values => {
             this.service.initializeGraph(this.graphElement, values.nodes, values.edges, values.options);
         });

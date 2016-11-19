@@ -2,73 +2,23 @@
 
 import {Injectable, ElementRef} from "@angular/core";
 import * as vis from "vis";
-import {VglEdge} from "./edge.interface";
-import {VglNode} from "./node.interface";
-import {VisNgOptions} from "./options.interface";
-
-export interface VisNgNetworkEventArgument {
-    nodes?: (string | number)[]; // array of selected nodeIds
-    edges?: (string | number)[]; // array of selected edgeIds
-    event?: MouseEvent;
-    pointer?: {
-        DOM?: {x: number, y: number};
-        canvas?: {x: number, y: number};
-    };
-}
-
-export declare type VisNgNetworkEventCallback = (event: VisNgNetworkEventArgument) => any;
-
-export interface VisNgNetwork {
-    // Global methods for the network
-    destroy(): void;
-    setData(data: {nodes: any, edges: any}): void;
-    setOptions(options: VisNgOptions): void;
-    on(eventName: string, callback: VisNgNetworkEventCallback): void;
-    off(eventName: string, callback?: VisNgNetworkEventCallback): void;
-    once(eventName: string, callback: VisNgNetworkEventCallback): void;
-}
-
-// For a lot of these I have no idea what are the types of parameters.
-// Docs are kinda shitty for types.
-export interface VsNgDataSet {
-    // Methods
-
-
-    add(data: any[], senderId?: any): number[];
-    clear(senderId?: any): number[];
-    distinct(field: any): any[];
-    flush(): void;
-    forEach(callback: Function, options?: any): void;
-    get(): any[];
-    get(options?, data?): Object | any[];
-    get(id, options?, data?): Object | any[];
-    get(ids, options?, data?): Object | any[];
-    getDataSet(): any;
-    getIds(options?): number[];
-    //...
-    remove(id, senderId?): number[];
-    remove(ids, senderId?): number[];
-    //...
-    update(data, senderId?): number[];
-
-
-    // Properties
-
-    /**
-     * The number of items in the DataSet.
-     */
-    length: number;
-}
+import {VisNgNetworkEdge} from "./interfaces/vis-ng-network-edge.interface";
+import {VisNgNetworkNode} from "./interfaces/vis-ng-network-node.interface";
+import {VisNgNetworkOptions} from "./interfaces/vis-ng-network-options.interface";
+import {
+    VisNgNetwork, VsNgDataSet,
+    VisNgNetworkEventCallback
+} from "./interfaces/vis-ng-network.interface";
 
 @Injectable()
-export class VisGraphService {
+export class VisNetworkService {
 
     private network: VisNgNetwork;
 
     private nodes: VsNgDataSet;
     private edges: VsNgDataSet;
     private container: ElementRef;
-    private options: VisNgOptions;
+    private options: VisNgNetworkOptions;
 
     constructor() {
     }
@@ -143,18 +93,18 @@ export class VisGraphService {
     }
 
     private initDraw(): void {
-        var data = {
+        let data = {
             nodes: this.nodes,
             edges: this.edges
         };
-        var options = this.options;
+        let options = this.options;
         this.network = new vis.Network(this.container.nativeElement, data, options);
     }
 
     public initializeGraph(container: ElementRef,
-                           nodes: VglNode[],
-                           edges: VglEdge[],
-                           options: VisNgOptions): void {
+                           nodes: VisNgNetworkNode[],
+                           edges: VisNgNetworkEdge[],
+                           options: VisNgNetworkOptions): void {
         this.container = container;
         this.nodes = new vis.DataSet(nodes);
         this.edges = new vis.DataSet(edges);

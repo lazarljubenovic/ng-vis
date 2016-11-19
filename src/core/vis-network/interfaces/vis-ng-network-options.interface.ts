@@ -1,4 +1,4 @@
-export interface VisNgOptions {
+export interface VisNgNetworkOptions {
     /**
      * If true, the Network will automatically detect when its container is resized,
      * and redraw itself accordingly. If false, the Network can be forced to repaint
@@ -26,7 +26,7 @@ export interface VisNgOptions {
      * supported. Take a look at the [[VisNgOptionsLocale]] for more explanation
      * on how to customize this.
      */
-    locales?: {[key: string]: VisNgOptionsLocale};
+    locales?: {[key: string]: VisNgNetworkOptionsLocale};
 
     /**
      * When a Network is configured to be clickToUse, it will react to mouse and
@@ -40,50 +40,50 @@ export interface VisNgOptions {
     /**
      * Generates an interactive option editor with filtering.
      */
-    configure?: VisNgOptionsConfigure;
+    configure?: VisNgNetworkOptionsConfigure;
 
     /**
      * Handles the creation and deletion of edges and contains the global edge
      * options and styles.
      */
-    edges?: VisNgOptionsEdges;
+    edges?: VisNgNetworkOptionsEdges;
 
     /**
      * Handles the creation and deletion of nodes and contains the global node
      * options and styles.
      */
-    nodes?: VisNgOptionsNodes;
+    nodes?: VisNgNetworkOptionsNodes;
 
     /**
      * Contains the groups and some options on how to handle nodes with
      * non-existing groups.
      */
-    groups?: VisNgOptionsGroups;
+    groups?: VisNgNetworkOptionsGroups;
 
     /**
      * Governs the initial and hierarchical positioning.
      */
-    layout?: VisNgOptionsLayout;
+    layout?: VisNgNetworkOptionsLayout;
 
     /**
      * Used for all user interaction with the network. Handles mouse and touch
      * events and selection as well as the navigation buttons and the popups.
      */
-    interaction?: VisNgOptionsInteraction;
+    interaction?: VisNgNetworkOptionsInteraction;
 
     /**
      * Supplies an API and optional GUI to alter the data in the network.
      */
-    manipulation?: VisNgOptionsManipulation;
+    manipulation?: VisNgNetworkOptionsManipulation;
 
     /**
      * Does all the simulation moving the nodes and edges to their final positions,
      * also governs stabilization.
      */
-    physics?: VisNgOptionsPhysics;
+    physics?: VisNgNetworkOptionsPhysics;
 }
 
-export interface VisNgOptionsLocale {
+export interface VisNgNetworkOptionsLocale {
     edit?: string;
     del?: string;
     back?: string;
@@ -114,7 +114,7 @@ export interface VisNgOptionsLocale {
  * }
  * network.setOptions(options);
  */
-export interface VisNgOptionsConfigure {
+export interface VisNgNetworkOptionsConfigure {
     /**
      * Toggle the configuration interface on or off. This is an optional parameter.
      * If left undefined and any of the other properties of this object are defined,
@@ -148,7 +148,7 @@ export interface VisNgOptionsConfigure {
     showButton?: boolean;
 }
 
-export interface VisNgOptionsEdges {
+export interface VisNgNetworkOptionsEdges {
     /**
      * To draw an arrow with default settings, a string can be supplied. For example:
      * `arrows: 'to, from, middle'` or `'to; from'`, any combination with any
@@ -372,7 +372,7 @@ export interface VisNgOptionsEdges {
      * define the 'from' node. You have to supply the corresponding node ID.
      * This naturally only applies to individual edges.
      */
-    // from: number | string;
+    from?: string;
     /**
      * When true, the edge is not drawn. It is part still part of the physics simulation however!
      *
@@ -406,15 +406,25 @@ export interface VisNgOptionsEdges {
      *
      * @default undefined
      */
-    // id: string;
+    id?: string;
     /**
      * The label of the edge. HTML does not work in here because the network uses HTML5 Canvas.
      *
      * @default undefined
      */
-        // label: string;
+    label?: string;
+    /**
+     * Determines whether or not the label becomes bold when the edge is selected.
+     */
     labelHighlightBold?: boolean;
+    /**
+     * The physics simulation gives edges a spring length. This value can override the length of the
+     * spring in rest.
+     */
     length?: number;
+    /**
+     * When true, the edge is part of the physics simulation. When false, it will not act as a spring.
+     */
     physics?: boolean;
     scaling?: {
         min?: number;
@@ -445,12 +455,12 @@ export interface VisNgOptionsEdges {
         roundness?: number;
     };
     title?: string;
-    // to: string | number;
+    to?: string;
     value?: number;
     width?: number;
 }
 
-export interface VisNgOptionsNodes {
+export interface VisNgNetworkOptionsNodes {
     borderWidth?: number;
     borderWidthSelected?: number;
     brokenImage?: string;
@@ -481,6 +491,7 @@ export interface VisNgOptionsNodes {
     };
     group?: string;
     hidden?: boolean;
+    id?: string;
     icon?: {
         face?: string;
         code?: string,
@@ -527,12 +538,12 @@ export interface VisNgOptionsNodes {
     y?: number;
 }
 
-export interface VisNgOptionsGroups {
+export interface VisNgNetworkOptionsGroups {
     useDefaultGroups?: boolean;
-    [groupId: string]: VisNgOptionsNodes;
+    [groupId: string]: VisNgNetworkOptionsNodes;
 }
 
-export interface VisNgOptionsLayout {
+export interface VisNgNetworkOptionsLayout {
     randomSeed?: number;
     improvedLayout?: boolean;
     hierarchical?: boolean | {
@@ -548,7 +559,7 @@ export interface VisNgOptionsLayout {
     }
 }
 
-export interface VisNgOptionsInteraction {
+export interface VisNgNetworkOptionsInteraction {
     dragNodes?: boolean;
     dragView?: boolean;
     hideEdgesOnDrag?: boolean;
@@ -572,7 +583,7 @@ export interface VisNgOptionsInteraction {
     zoomView?: boolean;
 }
 
-export interface VisNgOptionsManipulation {
+export interface VisNgNetworkOptionsManipulation {
     enabled?: boolean;
     initiallyActive?: boolean;
     addNode?: boolean | ((nodeData: any, callback: (nodeData: any) => any) => void);
@@ -584,10 +595,10 @@ export interface VisNgOptionsManipulation {
     /**
      * All node options are valid except id, x, y and fixed
      */
-    controlNodeStyle?: VisNgOptionsNodes;
+    controlNodeStyle?: VisNgNetworkOptionsNodes;
 }
 
-export interface VisNgOptionsPhysics {
+export interface VisNgNetworkOptionsPhysics {
     enables?: boolean;
     barnesHut?: {
         gravitationalConstant?: number;

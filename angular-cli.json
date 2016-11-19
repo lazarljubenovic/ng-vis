@@ -15,7 +15,7 @@
       "main": "main.ts",
       "test": "test.ts",
       "tsconfig": "tsconfig.json",
-      "prefix": "vgl",
+      "prefix": "vis",
       "mobile": false,
       "styles": [
         "styles.css"

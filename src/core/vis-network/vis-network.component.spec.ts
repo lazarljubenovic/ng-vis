@@ -1,22 +1,22 @@
 /* tslint:disable:no-unused-variable */
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
-import {VisGraphComponent} from "./vis-graph.component";
-import {VisGraphService} from "./vis-graph.service";
+import {VisNetworkComponent} from "./vis-network.component";
+import {VisNetworkService} from "./vis-network.service";
 
-describe('VisGraphComponent', () => {
-    let component: VisGraphComponent;
-    let fixture: ComponentFixture<VisGraphComponent>;
+describe('VisNetworkComponent', () => {
+    let component: VisNetworkComponent;
+    let fixture: ComponentFixture<VisNetworkComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [VisGraphComponent],
-            providers: [VisGraphService],
+            declarations: [VisNetworkComponent],
+            providers: [VisNetworkService],
         })
             .compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(VisGraphComponent);
+        fixture = TestBed.createComponent(VisNetworkComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

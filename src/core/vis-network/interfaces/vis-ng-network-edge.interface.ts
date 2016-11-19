@@ -1,4 +1,4 @@
-export interface VglEdge {
+export interface VisNgNetworkEdge {
     id: string | number;
     from: string | number;
     to: string | number;

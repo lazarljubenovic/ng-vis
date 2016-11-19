@@ -1,10 +1,11 @@
 import {OnInit, Input, Directive, Output, EventEmitter} from "@angular/core";
-import {VglNode} from "../node.interface";
-import {VisGraphService, VisNgNetworkEventArgument} from "../vis-graph.service";
-import {VisNgOptionsNodes} from "../options.interface";
+import {VisNgNetworkNode} from "../interfaces/vis-ng-network-node.interface";
+import {VisNetworkService} from "../vis-network.service";
+import {VisNgNetworkOptionsNodes} from "../interfaces/vis-ng-network-options.interface";
+import {VisNgNetworkEventArgument} from "../interfaces/vis-ng-network.interface";
 
-@Directive({selector: 'vgl-node'})
-export class NodeDirective implements OnInit {
+@Directive({selector: 'vis-network-node'})
+export class VisNetworkNodeDirective implements OnInit {
 
     @Input()
     public id: string;
@@ -12,15 +13,15 @@ export class NodeDirective implements OnInit {
     @Input()
     public label: string;
 
-    private _options: VisNgOptionsNodes;
+    private _options: VisNgNetworkOptionsNodes;
 
     @Input()
-    public set options(options: VisNgOptionsNodes) {
+    public set options(options: VisNgNetworkOptionsNodes) {
         this._options = options;
         setTimeout(() => this.service.updateNode(this.toObject()));
     }
 
-    public get options(): VisNgOptionsNodes {
+    public get options(): VisNgNetworkOptionsNodes {
         return this._options;
     }
 
@@ -33,14 +34,14 @@ export class NodeDirective implements OnInit {
         }
     }
 
-    public toObject(): VglNode {
+    public toObject(): VisNgNetworkNode {
         return Object.assign({
             id: this.id,
             label: this.label,
         }, this.options);
     }
 
-    constructor(private service: VisGraphService) {
+    constructor(private service: VisNetworkService) {
     }
 
     ngOnInit() {
