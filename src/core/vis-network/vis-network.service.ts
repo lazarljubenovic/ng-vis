@@ -113,7 +113,9 @@ export class VisNetworkService {
     }
 
     public destroy() {
-        this.network.destroy();
+        if (this.network) {
+            this.network.destroy();
+        }
     }
 
 }
